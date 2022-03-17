@@ -4,30 +4,41 @@ os.system('cls')
 
 
 f = open("./Corpus/Entertainment/1.txt", "r")
-sentence = f.read()
+textFile = f.read()
 
 ab = ['Dr', 'Mr']
 
 
-def split_sentences(st):
-    # sentences = re.split(r"(^Dr)[.?!]\s+", st)
-    # if sentences[-1]:
-    #     return sentences
-    # else:
-    #     return sentences[:-1]
-    sentence = []
-    word = 'Dr'
-    temp = ''
-    for i in range(len(st)):
-        temp += st[i]
-        if st[i] == '.':
-            sentence.append(temp)
-            i += 1
-            temp = ''
-    return sentence
+# Splits the file into sentences
+def splitToSentences(st):
+    sentences = re.split(r"[.?!]\s+", st)
+    return sentences
 
 
-for sentence in split_sentences(sentence):
-    print(sentence, '\n')
+# Splits the sentence into words
+def splitToWords(sentence):
+    temp = sentence.split()
+    return temp
 
-# print(split_sentences(sentence))
+
+# def sentenceProbability(sentence):
+sentences = splitToSentences(textFile)
+
+words = []
+
+for sentence in sentences:
+    for x in splitToWords(sentence):
+        words.append(x)
+
+wordTypes = {}
+
+for word in words:
+    lowerWord = word.lower()
+    if lowerWord in wordTypes:
+        wordTypes[lowerWord] += 1
+    else:
+        wordTypes[lowerWord] = 1
+
+
+# Calculates Bigram
+temp = 'matt reeves directed the batman'

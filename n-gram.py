@@ -41,6 +41,9 @@ for word in words:
     else:
         wordTypes[word] = 1
 
+testString = 'The Batman is the best'
+test = 'The Batman is the best'
+
 
 def getNGramString(string, ngramNumber):
     string = string.lower()
@@ -60,5 +63,18 @@ def getNGramString(string, ngramNumber):
     return totalGrams
 
 
-test = 'The Batman is the best'
-print(getNGramString(test, 4))
+test = test.lower()
+test = splitToWords(test)
+
+
+def findCount(word, corpus):
+    count = corpus.count(word)
+    # for sentence in corpus:
+    #     if word in sentence:
+    #         count += 1
+    return count
+
+
+nGramsArray = getNGramString(testString, 2)
+
+print(findCount('the', "the batman's there is my favorite batman movie"))

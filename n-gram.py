@@ -34,16 +34,7 @@ for sentence in sentences:
     for x in splitToWords(sentence):
         words.append(x)
 
-wordTypes = {}
-
-for word in words:
-    if word in wordTypes:
-        wordTypes[word] += 1
-    else:
-        wordTypes[word] = 1
-
-testString = 'The Batman is the best'
-test = 'The Batman is the best'
+uniqueWords = set(words)
 
 
 def getNGramString(string, ngramNumber):
@@ -111,4 +102,18 @@ def SentenceProb(sentence, corpus):
     return result
 
 
-print(SentenceProb("The Batman", sentences))
+def SmoothSentenceProb(sentence, corpus, uniqueWords):
+    ngramString = getNGramString(sentence, 2)
+    sentence = sentence.lower()
+    sentence = sentence.split()
+    totalProbability = []
+    totalProbability.append(findCount(sentence[0], corpus)+1)
+    for i in range(1, len(sentence)):
+        temp = (findCount(ngramString[i], corpus)+1)
+        result = temp/(findCount(sentence[i], corpus)+uniqueWords)
+        totalProbability.append(result)
+    result = numpy.prod(totalProbability)
+    return result
+
+
+print(SmoothSentenceProb("The batman", sentences, len(uniqueWords)))

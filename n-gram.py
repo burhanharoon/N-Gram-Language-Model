@@ -1,5 +1,6 @@
 import re
 import os
+import numpy
 os.system('cls')
 
 f = open("./Corpus/Entertainment/1.txt", "r")
@@ -48,7 +49,7 @@ test = 'The Batman is the best'
 def getNGramString(string, ngramNumber):
     string = string.lower()
     string = splitToWords(string)
-    totalGrams = []
+    totalGrams = [string[0]]
     for index, word in enumerate(string):
         i = index
         toFindProb = ''
@@ -59,22 +60,55 @@ def getNGramString(string, ngramNumber):
                     toFindProb += ' '
                     i -= 1
         if toFindProb:
-            totalGrams.append(rev_words(toFindProb))
+            realWord = toFindProb.strip()
+            totalGrams.append(rev_words(realWord))
     return totalGrams
 
 
-test = test.lower()
-test = splitToWords(test)
-
-
 def findCount(word, corpus):
-    count = corpus.count(word)
-    # for sentence in corpus:
-    #     if word in sentence:
-    #         count += 1
+    count = 0
+    for sentence in corpus:
+        expression = r"\b" + re.escape(word) + r"\b"
+        temp = re.findall(expression, sentence)
+        count += len(temp)
     return count
 
 
-nGramsArray = getNGramString(testString, 2)
+# returns: probability of a sentence using any ngram number
+# inputs: corpus, ngram number
+def getTotalProbability(sentence, corpus, ngram):
+    ngramString = getNGramString(sentence, ngram)
+    sentence = sentence.lower()
+    sentence = sentence.split()
+    totalProbability = []
+    totalProbability.append(findCount(sentence[0], corpus))
+    for i in range(1, len(sentence)):
+        temp = findCount(ngramString[i], corpus)
+        if temp:
+            result = temp/findCount(sentence[i], corpus)
+            totalProbability.append(result)
+        else:
+            totalProbability.append(0)
+    result = numpy.prod(totalProbability)
+    return result
 
-print(findCount('the', "the batman's there is my favorite batman movie"))
+
+# returns the probability of a sentence using bigram model
+def SentenceProb(sentence, corpus):
+    ngramString = getNGramString(sentence, 2)
+    sentence = sentence.lower()
+    sentence = sentence.split()
+    totalProbability = []
+    totalProbability.append(findCount(sentence[0], corpus))
+    for i in range(1, len(sentence)):
+        temp = findCount(ngramString[i], corpus)
+        if temp:
+            result = temp/findCount(sentence[i], corpus)
+            totalProbability.append(result)
+        else:
+            totalProbability.append(0)
+    result = numpy.prod(totalProbability)
+    return result
+
+
+print(SentenceProb("The Batman", sentences))

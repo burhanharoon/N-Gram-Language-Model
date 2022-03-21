@@ -4,13 +4,13 @@ import numpy
 os.system('cls')
 
 textFile = []
-# print('YES', '\n\n\n\n\n\n\n')
-for path, dirs, files in os.walk('./Corpus'):
+print('YES', '\n\n\n\n\n\n\n')
+for path, dirs, files in os.walk('./corpus'):
     for file in files:
         read_f = open(os.path.join(path, file), 'r')
         textFile.append(read_f.read().lower())
 
-# print(textFile)
+# print(textFile[1])
 
 
 def rev_words(string):
@@ -38,7 +38,7 @@ for files in textFile:
     for sentence in temp:
         sentences.append(sentence)
 
-# print(sentences)
+print(sentences)
 
 words = []
 
@@ -46,9 +46,9 @@ for sentence in sentences:
     for x in splitToWords(sentence):
         words.append(x)
 
-# print(words)
+print(len(words))
 uniqueWords = set(words)
-# print(uniqueWords)
+print(len(uniqueWords))
 
 
 def getNGramString(string, ngramNumber):
@@ -130,4 +130,4 @@ def SmoothSentenceProb(sentence, corpus, uniqueWords):
     return result
 
 
-print(SmoothSentenceProb("The batman was a hit", sentences, len(uniqueWords)))
+# print(SmoothSentenceProb("The batman was a hit", sentences, len(uniqueWords)))

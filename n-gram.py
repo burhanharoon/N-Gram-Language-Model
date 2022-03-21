@@ -4,25 +4,31 @@ import numpy
 os.system('cls')
 
 textFile = []
-print('YES', '\n\n\n\n\n\n\n')
+# Reads all files within the ./corpus directory and its subfolders
 for path, dirs, files in os.walk('./corpus'):
     for file in files:
         read_f = open(os.path.join(path, file), 'r')
         textFile.append(read_f.read().lower())
 
-# print(textFile[1])
 
-
-def rev_words(string):
+def reverseWords(string):
     if string:
         words = string.split(' ')
         rev = ' '.join(reversed(words))
         return rev
 
 
+def findCountAtStart(word, corpus):
+    count = 0
+    for sentence in corpus:
+        if sentence.startswith(word):
+            count += 1
+    return count
+
+
 # Splits file into sentences
-def splitToSentences(st):
-    sentences = re.split(r"[.?!]\s+", st)
+def tokenize(file):
+    sentences = re.split(r"[.?!]\s+", file)
     return sentences
 
 
@@ -34,11 +40,10 @@ def splitToWords(sentence):
 
 sentences = []
 for files in textFile:
-    temp = (splitToSentences(files))
+    temp = (tokenize(files))
     for sentence in temp:
         sentences.append(sentence)
 
-# print(sentences)
 
 words = []
 
@@ -46,9 +51,9 @@ for sentence in sentences:
     for x in splitToWords(sentence):
         words.append(x)
 
-# print(len(words))
+totalWords = len(words)
 uniqueWords = set(words)
-# print(len(uniqueWords))
+totalUniqueWords = len(uniqueWords)
 
 
 def getNGramString(string, ngramNumber):
@@ -69,7 +74,7 @@ def getNGramString(string, ngramNumber):
                         i -= 1
             if toFindProb:
                 realWord = toFindProb.strip()
-                totalGrams.append(rev_words(realWord))
+                totalGrams.append(reverseWords(realWord))
         return totalGrams
 
 
@@ -101,7 +106,7 @@ def getTotalProbability(sentence, corpus, ngram):
     return result
 
 
-# returns the probability of a sentence using bigram model
+# returns probability of a sentence using bi-gram
 def SentenceProb(sentence, corpus, totalWords):
     ngramString = getNGramString(sentence, 2)
     sentence = sentence.lower()
@@ -120,6 +125,7 @@ def SentenceProb(sentence, corpus, totalWords):
     return result
 
 
+# returns smooth probability of a sentence using bi-gram
 def SmoothSentenceProb(sentence, corpus, totalWords, uniqueWords):
     ngramString = getNGramString(sentence, 2)
     sentence = sentence.lower()
@@ -136,15 +142,19 @@ def SmoothSentenceProb(sentence, corpus, totalWords, uniqueWords):
     return result
 
 
-def findCountAtStart(word, corpus):
-    count = 0
-    for sentence in corpus:
-        if sentence.startswith(word):
-            count += 1
-    return count
+def perplexity(probability, totalWords):
+    perplexity = 1/probability
+    perplexity = pow(perplexity, totalWords)
+    return perplexity
 
 
-# print(SmoothSentenceProb("The batman was a hit",
-#       sentences, len(words), len(uniqueWords)))
+probability = SmoothSentenceProb("The batman was a hit",
+                                 sentences, totalWords, totalUniqueWords)
 
-print(getNGramString("The batman was a hit", 5))
+print("The probability is: ", probability)
+perplexity = perplexity(probability, totalWords)
+
+if perplexity:
+    print("Perplexity is: ", perplexity)
+else:
+    print("Perplexity out of range")
